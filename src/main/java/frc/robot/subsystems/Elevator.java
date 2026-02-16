@@ -12,8 +12,10 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -30,6 +32,8 @@ public class Elevator extends SubsystemBase {
 
   ProfiledPIDController pid;
   PIDController p_pid;
+
+  SlewRateLimiter speed_limiter;
 
 
   /** Creates a new Elevator. */
@@ -69,6 +73,9 @@ public class Elevator extends SubsystemBase {
 
 
     pid = new ProfiledPIDController(Constants.ev.kp, Constants.ev.ki, Constants.ev.kd, new TrapezoidProfile.Constraints(4, 4));
+    p_pid = new PIDController(Constants.ev.kp, Constants.ev.ki, Constants.ev.kd);
+
+    speed_limiter = new SlewRateLimiter(4.5);
 
 
 
@@ -92,13 +99,23 @@ public void reset_elevator() {
 
 }
 
-public void run (){
+public void run (double speed){
 
-  double speed = Constants.ev.speed;
+  double speed1 = speed_limiter.calculate(speed);
 
   r_motor.set(speed + Constants.ev.feed_forward);
   l_motor.set(speed + Constants.ev.feed_forward);
 
+}
+
+
+public void ev_to_roof(double position){
+
+  
+
+  double speed = MathUtil.clamp(p_pid.calculate(get_position(), position), -0.5, 0.5);
+
+  run(speed);
 }
 
 

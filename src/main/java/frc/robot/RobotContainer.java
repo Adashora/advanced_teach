@@ -9,6 +9,7 @@ import frc.robot.commands.Autos;
 import frc.robot.commands.Drive;
 import frc.robot.commands.ExampleCommand;
 import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.ExampleSubsystem;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -27,8 +28,11 @@ public class RobotContainer {
 
 private final Joystick joystickR = new Joystick(0);
 private final Joystick joystickL = new Joystick(1);
+private final Joystick op_JoystickR = new Joystick(2);
+private final Joystick op_JoystickL = new Joystick(3);
 
 private final Drivetrain dt = new Drivetrain();
+private final Elevator ev = new Elevator();
 
 
 
