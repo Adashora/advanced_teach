@@ -8,12 +8,15 @@ import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.Autos;
 import frc.robot.commands.Drive;
 import frc.robot.commands.ExampleCommand;
+import frc.robot.commands.run_ev;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.ExampleSubsystem;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 /**
@@ -30,6 +33,10 @@ private final Joystick joystickR = new Joystick(0);
 private final Joystick joystickL = new Joystick(1);
 private final Joystick op_JoystickR = new Joystick(2);
 private final Joystick op_JoystickL = new Joystick(3);
+
+private final JoystickButton reset_ev = new JoystickButton(op_JoystickL, 1);
+private final JoystickButton to_roof = new JoystickButton(op_JoystickL, 2);
+
 
 private final Drivetrain dt = new Drivetrain();
 private final Elevator ev = new Elevator();
@@ -49,6 +56,7 @@ private final Elevator ev = new Elevator();
 
 
     dt.setDefaultCommand(new Drive(dt, joystickR, joystickL));
+    ev.setDefaultCommand(new run_ev(ev, op_JoystickL, Constants.max_speed));
     // Configure the trigger bindings
     configureBindings();
   }
@@ -70,6 +78,13 @@ private final Elevator ev = new Elevator();
     // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
     // cancelling on release.
     m_driverController.b().whileTrue(m_exampleSubsystem.exampleMethodCommand());
+
+
+    reset_ev.onTrue(new InstantCommand(() -> ev.reset_elevator()));
+    to_roof.onTrue(new InstantCommand(() -> ev.ev_to_roof(0)));
+
+
+
   }
 
   /**

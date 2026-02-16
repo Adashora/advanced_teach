@@ -26,76 +26,76 @@ public class Elevator extends SubsystemBase {
   SparkMax r_motor;
 
   RelativeEncoder encoder;
-
-  SparkMaxConfig r_motor_config;
-  SparkMaxConfig l_motor_config;
-
-  ProfiledPIDController pid;
-  PIDController p_pid;
-
-  SlewRateLimiter speed_limiter;
-
-
-  /** Creates a new Elevator. */
-  public Elevator() {
-
-    r_motor = new SparkMax(Constants.ev.r_motor_ID, MotorType.kBrushless);
-    l_motor = new SparkMax(Constants.ev.l_motor_ID, MotorType.kBrushless);
-
-    encoder = r_motor.getEncoder();
-
-    r_motor_config = new SparkMaxConfig();
-    l_motor_config = new SparkMaxConfig();
-
-    r_motor_config
-    .idleMode(IdleMode.kBrake)
-    .voltageCompensation(12)
-    .inverted(false);
-
-    r_motor_config.encoder
-    .positionConversionFactor(Constants.ev.position_conversion_factor)
-    .velocityConversionFactor(Constants.ev.velocity_conversion_factor);
-
-    l_motor_config
-    .idleMode(IdleMode.kBrake)
-    .voltageCompensation(12)
-    .inverted(false);
-
-    l_motor_config.encoder
-    .positionConversionFactor(Constants.ev.position_conversion_factor)
-    .velocityConversionFactor(Constants.ev.velocity_conversion_factor);
-
-
-
-    r_motor.configure(r_motor_config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-    l_motor.configure(l_motor_config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-
-
-
-    pid = new ProfiledPIDController(Constants.ev.kp, Constants.ev.ki, Constants.ev.kd, new TrapezoidProfile.Constraints(4, 4));
-    p_pid = new PIDController(Constants.ev.kp, Constants.ev.ki, Constants.ev.kd);
-
-    speed_limiter = new SlewRateLimiter(4.5);
-
-
-
-
+  
+    SparkMaxConfig r_motor_config;
+    SparkMaxConfig l_motor_config;
+  
+    ProfiledPIDController pid;
+    PIDController p_pid;
+  
+    SlewRateLimiter speed_limiter;
+  
+  
+    /** Creates a new Elevator. */
+    public Elevator() {
+  
+      r_motor = new SparkMax(Constants.ev.r_motor_ID, MotorType.kBrushless);
+      l_motor = new SparkMax(Constants.ev.l_motor_ID, MotorType.kBrushless);
+  
+      encoder = r_motor.getEncoder();
+  
+      r_motor_config = new SparkMaxConfig();
+      l_motor_config = new SparkMaxConfig();
+  
+      r_motor_config
+      .idleMode(IdleMode.kBrake)
+      .voltageCompensation(12)
+      .inverted(false);
+  
+      r_motor_config.encoder
+      .positionConversionFactor(Constants.ev.position_conversion_factor)
+      .velocityConversionFactor(Constants.ev.velocity_conversion_factor);
+  
+      l_motor_config
+      .idleMode(IdleMode.kBrake)
+      .voltageCompensation(12)
+      .inverted(false);
+  
+      l_motor_config.encoder
+      .positionConversionFactor(Constants.ev.position_conversion_factor)
+      .velocityConversionFactor(Constants.ev.velocity_conversion_factor);
+  
+  
+  
+      r_motor.configure(r_motor_config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+      l_motor.configure(l_motor_config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+  
+  
+  
+      pid = new ProfiledPIDController(Constants.ev.kp, Constants.ev.ki, Constants.ev.kd, new TrapezoidProfile.Constraints(4, 4));
+      p_pid = new PIDController(Constants.ev.kp, Constants.ev.ki, Constants.ev.kd);
+  
+      speed_limiter = new SlewRateLimiter(4.5);
+  
+  
+  
+  
+    }
+  
+  public double get_position() {
+  
+    return encoder.getPosition();
   }
-
-public double get_position() {
-
-  return encoder.getPosition();
-}
-
-public double get_velocity() {
-
-  return encoder.getVelocity();
-}
-
-
-public void reset_elevator() {
-
-  encoder.setPosition(0);
+  
+  public double get_velocity() {
+  
+    return encoder.getVelocity();
+  }
+  
+  
+  public void reset_elevator() {
+  
+    encoder.setPosition(0);
 
 }
 
@@ -112,7 +112,6 @@ public void run (double speed){
 public void ev_to_roof(double position){
 
   
-
   double speed = MathUtil.clamp(p_pid.calculate(get_position(), position), -0.5, 0.5);
 
   run(speed);
